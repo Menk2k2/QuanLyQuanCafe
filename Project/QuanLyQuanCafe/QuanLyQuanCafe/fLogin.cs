@@ -1,4 +1,5 @@
 ﻿using QuanLyQuanCafe.DAO;
+using QuanLyQuanCafe.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -39,7 +40,8 @@ namespace QuanLyQuanCafe
             string passWord = tbxPassWord.Text;
             if (Login(userName, passWord))
             {
-                fTableManager f = new fTableManager();
+                Account loginAccount = AccountDAO.Instance.GetAccountByUserName(userName);
+                fTableManager f = new fTableManager(loginAccount);
                 this.Hide();
                 f.ShowDialog();
                 this.Show();
@@ -66,6 +68,25 @@ namespace QuanLyQuanCafe
             if (MessageBox.Show("Bạn có thực sự muốn thoát chương trình?", "Thông báo", MessageBoxButtons.OKCancel) != System.Windows.Forms.DialogResult.OK)
             {
                 e.Cancel=true;
+            }    
+        }
+
+        private void tbxPassWord_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if(checkBox1.Checked)
+            {
+                tbxPassWord.UseSystemPasswordChar = false;
+            }    
+            else
+            {
+                tbxPassWord.UseSystemPasswordChar= true;
             }    
         }
     }

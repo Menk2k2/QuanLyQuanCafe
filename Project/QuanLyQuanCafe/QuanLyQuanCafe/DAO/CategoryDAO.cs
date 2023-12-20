@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +33,50 @@ namespace QuanLyQuanCafe.DAO
             }
 
             return list;
+        }
+
+        public Category GetCategoryByID(int id)
+
+        {
+            Category category = null;
+
+            string query = "select * from FoodCategory where id = " + id;
+
+            DataTable data = DataProvider.Instance.ExcuteQuery(query);
+
+            foreach (DataRow item in data.Rows)
+            {
+                category = new Category(item);
+                return category;
+            }
+
+            return category;
+        }
+
+        public bool InsertCategory(string name)
+        {
+            string query = string.Format("INSERT dbo.FoodCategory (name) VALUES (N'{0}') ", name);
+            int result = DataProvider.Instance.ExcuteNonQuery(query);
+
+            return result > 0;
+        }
+
+        public bool UpdateCategory(int id,string name)
+        {
+            string query = string.Format("UPDATE dbo.FoodCategory SET name = N'{0}' WHERE id = {1}", name, id);
+            int result = DataProvider.Instance.ExcuteNonQuery(query);
+
+            return result > 0;
+        }
+
+        public bool DeleteCategory(int id)
+        {
+            FoodDAO.Instance.DeleteFoodByCategoryID(id);
+
+            string query = string.Format("Delete FoodCategory Where id = {0}", id);
+            int result = DataProvider.Instance.ExcuteNonQuery(query);
+
+            return result > 0;
         }
     }
 }

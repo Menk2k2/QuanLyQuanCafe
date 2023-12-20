@@ -24,6 +24,11 @@ namespace QuanLyQuanCafe.DAO
         /// Thành công: bill ID
         /// Thất Bại: -1
         
+        public void DeleteBillByTableID(int id)
+        {
+            DataProvider.Instance.ExcuteQuery("Delete dbo.Bill WHERE idTable = " + id + "AND status = 0");
+        }
+
         public int GetUncheckBillIDByTableID(int id)
         {
             DataTable data = DataProvider.Instance.ExcuteQuery("SELECT * FROM dbo.Bill WHERE idTable = " + id + "AND status = 0");
@@ -36,16 +41,21 @@ namespace QuanLyQuanCafe.DAO
             return -1; // Ngược lại nếu không có thì trả về -1
         }
 
-        public void CheckOut(int id, int discount)
+        public void CheckOut(int id, int discount, float totalPrice)
         {
-            string query = " UPDATE dbo.Bill SET status = 1, " + "discount = " + discount + " WHERE id = " + id;
+            string query = " UPDATE dbo.Bill SET dateCheckOut = GETDATE(), status = 1, " + "discount = " + discount + ", totalPrice = "+ totalPrice + "WHERE id = " + id;
             DataProvider.Instance.ExcuteNonQuery(query);
         }
 
 
         public void InsertBill(int id)
         {
-            DataProvider.Instance.ExcuteNonQuery("exec USP_InsertBill @idTable", new object[] {id});
+            DataProvider.Instance.ExcuteNonQuery("exec USP_InsertBill @idTable", new object[]{id});
+        }
+
+        public DataTable GetBillListByDate(DateTime checkIn, DateTime checkOut)
+        {
+           return DataProvider.Instance.ExcuteQuery("exec USP_GetListBillByDate @checkIn , @checkOut", new object[] {checkIn, checkOut});
         }
 
         public int GetMaxIDBill()
